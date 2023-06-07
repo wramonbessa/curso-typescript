@@ -62,43 +62,63 @@ useEffect(() => {
 Podemos aprimorar esse exemplo para fazer nossa primeira requisição para uma API externa, conforme exemplo a seguir, onde fazemos uma requisição a API STAPI, solicitando um personagem com base no parâmetro uid:CHMA0000289509.
 
 ```typescript
-//....
-//Definição da interface do nosso usuário, os dados que serão recebidos da API
-interface Character {
-  name: string;
-  dayOfBirth: string;
-  monthOfBirth: string;
-  yearOfBirth: string;
-  placeOfBirth: string;
-}
-//Definindo nosso state
-const [character, setCharacter] = useState<Character | null>();
-//UseEffect com array vazia, indicando que deve ser executado ao inciar a página.
-useEffect(() => {
-  console.log("- Start Effect on load page ");
-  fetch("https://stapi.co/api/v1/rest/character?uid=CHMA0000289509")
-    .then((res) => res.json())
-    .then((json) => {
-      console.log("--");
-      console.log(json);
-      setCharacter(json.character);
-    });
-  console.log("- End Effect on load page ");
-}, []);
-///.....
-///Condicional para exibir apenas quando tiver terminado de carregar nosso personagem
-{
-  character && (
+import React, { useEffect, useState } from "react";
+function Effect() {
+  const [count, setCount] = useState(0);
+  const [count2, setCount2] = useState(0);
+  useEffect(() => {
+    console.log("Roda a cada renderização");
+  });
+  useEffect(() => {
+    console.log("Alteração no primeiro state");
+  }, [count]);
+  interface Character {
+    name: string;
+    dayOfBirth: string;
+    monthOfBirth: string;
+    yearOfBirth: string;
+    placeOfBirth: string;
+  }
+  const [character, setCharacter] = useState<Character | null>();
+  useEffect(() => {
+    console.log("- Start Effect on load page ");
+    fetch("https://stapi.co/api/v1/rest/character?uid=CHMA0000289509")
+      .then((res) => res.json())
+      .then((json) => {
+        console.log("--");
+        console.log(json);
+        setCharacter(json.character);
+      });
+    console.log("- End Effect on load page ");
+  }, []);
+  return (
     <div>
-      <h2>{character.name}</h2>
-      <p>
-        Data de nascimento: {character.dayOfBirth}/{character.monthOfBirth}/
-        {character.yearOfBirth}
-      </p>
-      <p>Local de nascimento: {character.placeOfBirth}</p>
+      <p>Contador 1: {count}</p>
+      <p>Contador 2: {count2}</p>
+      {/* onClick que tem função que não renderiza tela */}
+      <button onClick={() => console.log("teste")}>Não renderiza</button>
+      {/* onClick vinculado ao hook */}
+      <button onClick={() => setCount((prevCount) => prevCount + 1)}>
+        + Contador 1
+      </button>
+      <button onClick={() => setCount2((prevCount) => prevCount + 1)}>
+        + Contador 2
+      </button>
+
+      {character && (
+        <div>
+          <h2>{character.name}</h2>
+          <p>
+            Data de nascimento: {character.dayOfBirth}/{character.monthOfBirth}/
+            {character.yearOfBirth}
+          </p>
+          <p>Local de nascimento: {character.placeOfBirth}</p>
+        </div>
+      )}
     </div>
   );
 }
+export default Effect;
 ```
 
 Podemos também utilizar o useEffect juntamente com a requisição de uma API para fazermos a nossa primeira página com busca. Crie um arquivo arquivo chamado ListApi.tsx, e execute o comando **tsrfce**. Para fazer isso vamos novamente utilizar a STAPI, vamos fazer uma requisição das 100 primeiras especies da sua base e vamos fazer uma listagem desses itens.
